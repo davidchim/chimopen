@@ -2,8 +2,8 @@ name: Sync /user/ from chimsub
 
 on:
   schedule:
-    - cron: '0 */2 * * *'  # 每两小时同步一次
-  workflow_dispatch:        # 支持手动触发
+    - cron: '0 */2 * * *'  # 每两小时运行一次
+  workflow_dispatch:        # 可手动触发
 
 jobs:
   sync:
