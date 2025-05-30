@@ -1,0 +1,32 @@
+name: Sync from chimsub
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'   # 每小时运行一次
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout chimopen repo
+        uses: actions/checkout@v3
+
+      - name: Clone chimsub private repo
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/davidchim/chimsub.git chimsub
+
+      - name: Replace user/ directory with chimsub's user/
+        run: |
+          rm -rf user
+          mkdir -p user
+          cp -r chimsub/user/* user/ 2>/dev/null || true
+
+      - name: Commit & Push changes if any
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Sync user/ from chimsub"
+          git push
